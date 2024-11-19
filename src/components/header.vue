@@ -1,4 +1,5 @@
 <script setup>  
+import {computed} from 'vue';
 const props = defineProps({
     carrito: {
         type: Array,
@@ -10,7 +11,11 @@ const props = defineProps({
     }
 });
 
-defineEmits(['incrementar-cantidad', 'decrementar-cantidad']);
+defineEmits(['incrementar-cantidad', 'decrementar-cantidad','agregar-carrito' , 'eliminar-producto','vaciar-carrito']);
+
+const totalPagar=computed(()=>{
+    return props.carrito.reduce((total,producto)=> total + (producto.precio * producto.cantidad),0);
+});
 
 </script>
 <template>
@@ -74,6 +79,7 @@ defineEmits(['incrementar-cantidad', 'decrementar-cantidad']);
                                             <button
                                                 class="btn btn-danger"
                                                 type="button"
+                                               @click="$emit('eliminar-producto', producto.id)"
                                             >
                                                 X
                                             </button>
@@ -82,8 +88,11 @@ defineEmits(['incrementar-cantidad', 'decrementar-cantidad']);
                                 </tbody>
                             </table>
 
-                            <p class="text-end">Total pagar: <span class="fw-bold">$899</span></p>
-                            <button class="btn btn-dark w-100 mt-3 p-2">Vaciar Carrito</button>
+                            <p class="text-end">Total pagar: <span class="fw-bold">${{ totalPagar }}</span></p>
+                            <button 
+                            class="btn btn-dark w-100 mt-3 p-2"
+                            @click="$emit('vaciar-carrito')"
+                            >Vaciar Carrito</button>
 
                             </div>
                             
@@ -100,6 +109,7 @@ defineEmits(['incrementar-cantidad', 'decrementar-cantidad']);
                     <button 
                         type="button"
                         class="btn fs-4 bg-primary text-white py-2 px-5"
+                        @click="$emit('agregar-carrito', guitarra)"
                     >Agregar al Carrito</button>
                 </div>
             </div>
